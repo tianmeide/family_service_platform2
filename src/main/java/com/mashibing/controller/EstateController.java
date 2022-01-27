@@ -1,5 +1,6 @@
 package com.mashibing.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.mashibing.bean.FcBuilding;
 import com.mashibing.bean.FcEstate;
@@ -52,5 +53,16 @@ public class EstateController {
         List<FcBuilding> fcBuildings = estateService.selectBuilding(buildingNumber,estateCode);
         System.out.println(fcBuildings);
         return JSONObject.toJSONString(new ReturnObject(fcBuildings));
+    }
+
+    @RequestMapping("/estate/updateBuilding")
+    public String updateBuilding(FcBuilding fcBuilding){
+        System.out.println("update building");
+        Integer result = estateService.updateBuilding(fcBuilding);
+        if(result == 1){
+            return JSONObject.toJSONString(new ReturnObject("更新楼宇成功"));
+        }else{
+            return JSONObject.toJSONString(new ReturnObject("更新楼宇失败"));
+        }
     }
 }
