@@ -4,14 +4,18 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.mashibing.bean.FcBuilding;
 import com.mashibing.bean.FcEstate;
+import com.mashibing.bean.FcUnit;
 import com.mashibing.bean.TblCompany;
 import com.mashibing.returnJson.ReturnObject;
 import com.mashibing.service.EstateService;
+import com.mashibing.vo.UnitMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -63,6 +67,26 @@ public class EstateController {
             return JSONObject.toJSONString(new ReturnObject("更新楼宇成功"));
         }else{
             return JSONObject.toJSONString(new ReturnObject("更新楼宇失败"));
+        }
+    }
+
+    @RequestMapping("/estate/selectUnit")
+    public String selectUnit(@RequestBody UnitMessage[] unitMessages){
+        System.out.println("estate selectUnit");
+        List<FcUnit> allUnit = new ArrayList<>();
+        for(UnitMessage unitMessage : unitMessages){
+            allUnit.addAll(estateService.selectUnit(unitMessage));
+        }
+        return JSONObject.toJSONString(new ReturnObject(allUnit));
+    }
+
+    @RequestMapping("/estate/updateUnit")
+    public String updateUnit(FcUnit fcUnit){
+        Integer result = estateService.updateUnit(fcUnit);
+        if(result == 1){
+            return JSONObject.toJSONString(new ReturnObject("更新单元成功"));
+        }else{
+            return JSONObject.toJSONString(new ReturnObject("更新单元失败"));
         }
     }
 }

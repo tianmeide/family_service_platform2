@@ -3,10 +3,13 @@ package com.mashibing.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mashibing.bean.FcBuilding;
 import com.mashibing.bean.FcEstate;
+import com.mashibing.bean.FcUnit;
 import com.mashibing.bean.TblCompany;
 import com.mashibing.mapper.common.FcBuildingMapper;
 import com.mashibing.mapper.common.FcEstateMapper;
+import com.mashibing.mapper.common.FcUnitMapper;
 import com.mashibing.mapper.common.TblCompanyMapper;
+import com.mashibing.vo.UnitMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +26,8 @@ public class EstateService {
     private FcEstateMapper fcEstateMapper;
     @Autowired
     private FcBuildingMapper fcBuildingMapper;
+    @Autowired
+    private FcUnitMapper fcUnitMapper;
 
     public List<TblCompany> selectCompany(){
 
@@ -78,5 +83,24 @@ public class EstateService {
     public Integer updateBuilding(FcBuilding fcBuilding){
         int result = fcBuildingMapper.updateById(fcBuilding);
         return result;
+    }
+
+    public List<FcUnit> selectUnit(UnitMessage unitMessage){
+        //定义返回值集合
+        List<FcUnit> fcUnits = new ArrayList<>();
+        for(int i = 0; i<unitMessage.getUnitCount();i++){
+            FcUnit fcUnit = new FcUnit();
+            fcUnit.setBuildingCode(unitMessage.getBuildingCode());
+            fcUnit.setUnitCode("U" + (i+1));
+            fcUnit.setUnitName("第" + (i+1) + "单元");
+            fcUnitMapper.insert(fcUnit);
+            fcUnits.add(fcUnit);
+        }
+        return fcUnits;
+    }
+
+    public Integer updateUnit(FcUnit fcUnit){
+        int i = fcUnitMapper.updateById(fcUnit);
+        return i;
     }
 }
