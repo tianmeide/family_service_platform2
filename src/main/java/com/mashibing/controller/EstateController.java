@@ -2,12 +2,10 @@ package com.mashibing.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.mashibing.bean.FcBuilding;
-import com.mashibing.bean.FcEstate;
-import com.mashibing.bean.FcUnit;
-import com.mashibing.bean.TblCompany;
+import com.mashibing.bean.*;
 import com.mashibing.returnJson.ReturnObject;
 import com.mashibing.service.EstateService;
+import com.mashibing.vo.CellMessage;
 import com.mashibing.vo.UnitMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -89,4 +87,30 @@ public class EstateController {
             return JSONObject.toJSONString(new ReturnObject("更新单元失败"));
         }
     }
+
+    @RequestMapping("/estate/insertCell")
+    public String insertCell(@RequestBody CellMessage[] cellMessages) {
+        System.out.println("insert cell");
+        List<FcCell> fcCells = estateService.insertCell(cellMessages);
+        return JSONObject.toJSONString(new ReturnObject(fcCells));
+    }
+
+    @RequestMapping("/estate/selectBuildingByEstate")
+    public String selectBuildByEstate(String estateCode){
+        System.out.println("estate:" + estateCode);
+        List<FcBuilding> fcBuildings = estateService.selectBuildingByEstate(estateCode);
+        System.out.println("-------------------------------------------------");
+        System.out.println(fcBuildings);
+        return JSONObject.toJSONString(new ReturnObject(fcBuildings));
+    }
+
+    @RequestMapping("/estate/selectUnitByBuildingCode")
+    public String selectUnitByBuildingCode(String buildingCode) {
+        System.out.println("select unit");
+        List<FcUnit> fcUnits = estateService.selectUnitByBuildingCode(buildingCode);
+        System.out.println(fcUnits.size());
+        return JSONObject.toJSONString(new ReturnObject(fcUnits));
+    }
+
+
 }

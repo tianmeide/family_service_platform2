@@ -1,14 +1,9 @@
 package com.mashibing.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.mashibing.bean.FcBuilding;
-import com.mashibing.bean.FcEstate;
-import com.mashibing.bean.FcUnit;
-import com.mashibing.bean.TblCompany;
-import com.mashibing.mapper.common.FcBuildingMapper;
-import com.mashibing.mapper.common.FcEstateMapper;
-import com.mashibing.mapper.common.FcUnitMapper;
-import com.mashibing.mapper.common.TblCompanyMapper;
+import com.mashibing.bean.*;
+import com.mashibing.mapper.common.*;
+import com.mashibing.vo.CellMessage;
 import com.mashibing.vo.UnitMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +23,8 @@ public class EstateService {
     private FcBuildingMapper fcBuildingMapper;
     @Autowired
     private FcUnitMapper fcUnitMapper;
+    @Autowired
+    private FcCellMapper fcCellMapper;
 
     public List<TblCompany> selectCompany(){
 
@@ -102,5 +99,41 @@ public class EstateService {
     public Integer updateUnit(FcUnit fcUnit){
         int i = fcUnitMapper.updateById(fcUnit);
         return i;
+    }
+
+    public List<FcCell> insertCell(CellMessage[] cellMessages) {
+        List<FcCell> lists = new ArrayList<>();
+        for(CellMessage cellMessage : cellMessages){
+            //楼层
+            for(int i = 1;i<=cellMessage.getStopFloor();i++){
+                //房间号
+                for(int j = cellMessage.getStartCellId();j<=cellMessage.getStopCellId();j++){
+                    FcCell fcCell = new FcCell();
+                    fcCell.setUnitCode(cellMessage.getUnitCode());
+                    fcCell.setCellName(i + "0" + j);
+                    fcCell.setCellCode("C" + i + "0" + j);
+                    fcCell.setFloorNumber(i);
+                    fcCellMapper.insert(fcCell);
+                    lists.add(fcCell);
+                }
+            }
+        }
+        return lists;
+    }
+
+    public List<FcBuilding> selectBuildingByEstate(String estateCode){
+        QueryWrapper<FcBuilding> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("estate_code",estateCode);
+        queryWrapper.select("building_name","building_code");
+        List<FcBuilding> fcBuildings = fcBuildingMapper.selectList(queryWrapper);
+        return fcBuildings;
+    }
+
+    public List<FcUnit> selectUnitByBuildingCode(String buildingCode){
+        QueryWrapper<FcUnit> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("building_code",buildingCode);
+        queryWrapper.select("unit_name","unit_code");
+        List<FcUnit> fcUnits = fcUnitMapper.selectList(queryWrapper);
+        return fcUnits;
     }
 }
